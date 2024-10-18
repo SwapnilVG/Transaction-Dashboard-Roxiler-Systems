@@ -12,7 +12,7 @@ const Statistics = ({ selectedMonth }) => {
     const fetchStatistics = async () => {
       try {
         const response = await fetch(
-          `https://transactiondashboardbackend-swapnil-gadekars-projects.vercel.app/api/statistics?month=${selectedMonth}`
+          `https://transactiondashboardbackend.vercel.app/api/statistics?month=${selectedMonth}`
         );
         const data = await response.json();
         setStatistics(data);
