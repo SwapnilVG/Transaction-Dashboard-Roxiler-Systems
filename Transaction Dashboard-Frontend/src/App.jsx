@@ -5,7 +5,7 @@ import MonthAndSearch from "./components/MonthAndSearch";
 import TransactionTable from "./components/TransactionsTable";
 import Statistics from "./components/Statistics";
 import BarChart from "./components/BarChart";
-
+import Loading from "./components/Loading"; 
 
 const App = () => {
   const [selectedMonth, setSelectedMonth] = useState("March");
@@ -13,6 +13,7 @@ const App = () => {
   const [searchText, setSearchText] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true); 
 
   // Fetch transactions based on selected month and search text
   const fetchTransactions = async () => {
@@ -28,12 +29,11 @@ const App = () => {
           },
         }
       );
-
-      // console.log(response.data.transactions);
-
       setTransactions(response.data.transactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -75,39 +75,43 @@ const App = () => {
 
   return (
     <div className="bg-[#edf6f6] ">
-      <div className="flex items-center justify-center p-5">
-        <div className="w-60 h-60 bg-white rounded-full flex items-center justify-center">
-          <p className="text-[#464646] font-bold text-[35px]">
-            Transaction
-            <br />
-            Dashboard
-          </p>
-        </div>
-      </div>
+      {isLoading ? (
+        <Loading /> // Show the Loading component during loading
+      ) : (
+        <>
+          <div className="flex items-center justify-center px-6">
+            <div className="w-60 h-60 bg-white rounded-full flex items-center justify-center">
+              <p className="text-[#464646] font-bold text-[35px]">
+                Transaction
+                <br />
+                Dashboard
+              </p>
+            </div>
+          </div>
 
-      <MonthAndSearch
-        value={searchText}
-        onSearchChange={handleSearchChange}
-        onClear={handleSearchClear}
-        selectedMonth={selectedMonth}
-        onMonthChange={handleMonthChange}
-      />
-      <TransactionTable
-        transactions={transactions}
-        onNextPage={handleNextPage}
-        onPrevPage={handlePrevPage}
-        selectedPerPage={selectedPerPage}
-        onChange={handlePerPageChange}
-        page={currentPage}
-      />
-      <hr className="border border-b-green-500"></hr>
-      <Statistics selectedMonth={selectedMonth} />
-      <hr className="border border-b-green-500"></hr>
-      <BarChart selectedMonth={selectedMonth} />
+          <MonthAndSearch
+            value={searchText}
+            onSearchChange={handleSearchChange}
+            onClear={handleSearchClear}
+            selectedMonth={selectedMonth}
+            onMonthChange={handleMonthChange}
+          />
+          <TransactionTable
+            transactions={transactions}
+            onNextPage={handleNextPage}
+            onPrevPage={handlePrevPage}
+            selectedPerPage={selectedPerPage}
+            onChange={handlePerPageChange}
+            page={currentPage}
+          />
+          <hr className="border border-b-green-500"></hr>
+          <Statistics selectedMonth={selectedMonth} />
+          <hr className="border border-b-green-500"></hr>
+          <BarChart selectedMonth={selectedMonth} />
+        </>
+      )}
     </div>
   );
 };
 
 export default App;
-
-
